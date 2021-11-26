@@ -44,9 +44,7 @@ The following code configures a route `GET /books` with a Lambda proxy integrati
 import { LambdaProxyIntegration } from '@aws-cdk/aws-apigatewayv2-integrations';
 
 declare const booksDefaultFn: lambda.Function;
-const booksIntegration = new LambdaProxyIntegration({
-  handler: booksDefaultFn,
-});
+const booksIntegration = new LambdaProxyIntegration('BooksIntegration', booksDefaultFn);
 
 const httpApi = new apigwv2.HttpApi(this, 'HttpApi');
 
@@ -70,9 +68,7 @@ The following code configures a route `GET /books` with an HTTP proxy integratio
 ```ts
 import { HttpProxyIntegration } from '@aws-cdk/aws-apigatewayv2-integrations';
 
-const booksIntegration = new HttpProxyIntegration({
-  url: 'https://get-books-proxy.myproxy.internal',
-});
+const booksIntegration = new HttpProxyIntegration('BooksIntegration', 'https://get-books-proxy.myproxy.internal');
 
 const httpApi = new apigwv2.HttpApi(this, 'HttpApi');
 
@@ -106,9 +102,7 @@ listener.addTargets('target', {
 });
 
 const httpEndpoint = new apigwv2.HttpApi(this, 'HttpProxyPrivateApi', {
-  defaultIntegration: new HttpAlbIntegration({
-    listener,
-  }),
+  defaultIntegration: new HttpAlbIntegration('DefaultIntegration', listener),
 });
 ```
 
@@ -129,9 +123,7 @@ listener.addTargets('target', {
 });
 
 const httpEndpoint = new apigwv2.HttpApi(this, 'HttpProxyPrivateApi', {
-  defaultIntegration: new HttpNlbIntegration({
-    listener,
-  }),
+  defaultIntegration: new HttpNlbIntegration('DefaultIntegration', listener),
 });
 ```
 
@@ -154,9 +146,8 @@ const namespace = new servicediscovery.PrivateDnsNamespace(this, 'Namespace', {
 const service = namespace.createService('Service');
 
 const httpEndpoint = new apigwv2.HttpApi(this, 'HttpProxyPrivateApi', {
-  defaultIntegration: new HttpServiceDiscoveryIntegration({
+  defaultIntegration: new HttpServiceDiscoveryIntegration('DefaultIntegration', service, {
     vpcLink,
-    service,
   }),
 });
 ```
@@ -179,8 +170,7 @@ listener.addTargets('target', {
 });
 
 const httpEndpoint = new apigwv2.HttpApi(this, 'HttpProxyPrivateApi', {
-  defaultIntegration: new HttpAlbIntegration({
-    listener,
+  defaultIntegration: new HttpAlbIntegration('DefaultIntegration', listener, {
     parameterMapping: new apigwv2.ParameterMapping()
       .appendHeader('header2', apigwv2.MappingValue.requestHeader('header1'))
       .removeHeader('header1'),
@@ -200,8 +190,7 @@ listener.addTargets('target', {
 });
 
 const httpEndpoint = new apigwv2.HttpApi(this, 'HttpProxyPrivateApi', {
-  defaultIntegration: new HttpAlbIntegration({
-    listener,
+  defaultIntegration: new HttpAlbIntegration('DefaultIntegration', listener, {
     parameterMapping: new apigwv2.ParameterMapping().custom('myKey', 'myValue'),
   }),
 });
@@ -233,8 +222,6 @@ new apigwv2.WebSocketStage(this, 'mystage', {
 
 declare const messageHandler: lambda.Function;
 webSocketApi.addRoute('sendmessage', {
-  integration: new LambdaWebSocketIntegration({
-    handler: messageHandler,
-  }),
+  integration: new LambdaWebSocketIntegration('SendMessageIntegration', messageHandler),
 });
 ```

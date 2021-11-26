@@ -14,7 +14,7 @@ describe('LambdaWebSocketIntegration', () => {
     // WHEN
     new WebSocketApi(stack, 'Api', {
       connectRouteOptions: {
-        integration: new LambdaWebSocketIntegration({ handler: fooFn }),
+        integration: new LambdaWebSocketIntegration('Integration', fooFn),
       },
     });
 

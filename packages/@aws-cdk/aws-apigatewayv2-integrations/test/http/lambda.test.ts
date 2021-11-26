@@ -11,9 +11,7 @@ describe('LambdaProxyIntegration', () => {
     const fooFn = fooFunction(stack, 'Fn');
     new HttpRoute(stack, 'LambdaProxyRoute', {
       httpApi: api,
-      integration: new LambdaProxyIntegration({
-        handler: fooFn,
-      }),
+      integration: new LambdaProxyIntegration('Integration', fooFn),
       routeKey: HttpRouteKey.with('/pets'),
     });
 
@@ -29,8 +27,7 @@ describe('LambdaProxyIntegration', () => {
     const api = new HttpApi(stack, 'HttpApi');
     new HttpRoute(stack, 'LambdaProxyRoute', {
       httpApi: api,
-      integration: new LambdaProxyIntegration({
-        handler: fooFunction(stack, 'Fn'),
+      integration: new LambdaProxyIntegration('Integration', fooFunction(stack, 'Fn'), {
         payloadFormatVersion: PayloadFormatVersion.VERSION_1_0,
       }),
       routeKey: HttpRouteKey.with('/pets'),
@@ -46,8 +43,7 @@ describe('LambdaProxyIntegration', () => {
     const api = new HttpApi(stack, 'HttpApi');
     new HttpRoute(stack, 'LambdaProxyRoute', {
       httpApi: api,
-      integration: new LambdaProxyIntegration({
-        handler: fooFunction(stack, 'Fn'),
+      integration: new LambdaProxyIntegration('Integration', fooFunction(stack, 'Fn'), {
         parameterMapping: new ParameterMapping()
           .appendHeader('header2', MappingValue.requestHeader('header1'))
           .removeHeader('header1'),
@@ -70,9 +66,7 @@ describe('LambdaProxyIntegration', () => {
 
     const apigwStack = new Stack(app, 'apigwStack');
     new HttpApi(apigwStack, 'httpApi', {
-      defaultIntegration: new LambdaProxyIntegration({
-        handler: fooFn,
-      }),
+      defaultIntegration: new LambdaProxyIntegration('Integration', fooFn),
     });
 
     expect(() => app.synth()).not.toThrow();

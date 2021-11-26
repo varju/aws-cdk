@@ -13,11 +13,6 @@ import {
  */
 export interface HttpProxyIntegrationProps {
   /**
-   * The full-qualified HTTP URL for the HTTP integration
-   */
-  readonly url: string
-
-  /**
    * The HTTP method that must be used to invoke the underlying HTTP proxy.
    * @default HttpMethod.ANY
    */
@@ -35,8 +30,8 @@ export interface HttpProxyIntegrationProps {
  * The HTTP Proxy integration resource for HTTP API
  */
 export class HttpProxyIntegration extends HttpRouteIntegration {
-  constructor(private readonly props: HttpProxyIntegrationProps) {
-    super();
+  constructor(id: string, private readonly url: string, private readonly props: HttpProxyIntegrationProps = {}) {
+    super(id);
   }
 
   public bind(_: HttpRouteIntegrationBindOptions): HttpRouteIntegrationConfig {
@@ -44,7 +39,7 @@ export class HttpProxyIntegration extends HttpRouteIntegration {
       method: this.props.method ?? HttpMethod.ANY,
       payloadFormatVersion: PayloadFormatVersion.VERSION_1_0, // 1.0 is required and is the only supported format
       type: HttpIntegrationType.HTTP_PROXY,
-      uri: this.props.url,
+      uri: this.url,
       parameterMapping: this.props.parameterMapping,
     };
   }

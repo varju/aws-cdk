@@ -78,14 +78,10 @@ configures all other HTTP method calls to `/books` to a lambda proxy.
 ```ts
 import { HttpProxyIntegration, LambdaProxyIntegration } from '@aws-cdk/aws-apigatewayv2-integrations';
 
-const getBooksIntegration = new HttpProxyIntegration({
-  url: 'https://get-books-proxy.myproxy.internal',
-});
+const getBooksIntegration = new HttpProxyIntegration('GetBooksIntegration' 'https://get-books-proxy.myproxy.internal');
 
 declare const booksDefaultFn: lambda.Function;
-const booksDefaultIntegration = new LambdaProxyIntegration({
-  handler: booksDefaultFn,
-});
+const booksDefaultIntegration = new LambdaProxyIntegration('BooksIntegration', booksDefaultFn);
 
 const httpApi = new apigwv2.HttpApi(this, 'HttpApi');
 
@@ -116,9 +112,7 @@ matched when a client reaches a route that is not explicitly defined.
 import { HttpProxyIntegration } from '@aws-cdk/aws-apigatewayv2-integrations';
 
 new apigwv2.HttpApi(this, 'HttpProxyApi', {
-  defaultIntegration: new HttpProxyIntegration({
-    url:'http://example.com',
-  }),
+  defaultIntegration: new HttpProxyIntegration('DefaultIntegration', 'https://example.com'),
 });
 ```
 
@@ -195,7 +189,7 @@ const dn = new apigwv2.DomainName(this, 'DN', {
 
 declare const handler: lambda.Function;
 const api = new apigwv2.HttpApi(this, 'HttpProxyProdApi', {
-  defaultIntegration: new LambdaProxyIntegration({ handler }),
+  defaultIntegration: new LambdaProxyIntegration('DefaultIntegration', handler),
   // https://${dn.domainName}/foo goes to prodApi $default stage
   defaultDomainMapping: {
     domainName: dn,
@@ -234,7 +228,7 @@ declare const handler: lambda.Function;
 declare const dn: apigwv2.DomainName;
 
 const apiDemo = new apigwv2.HttpApi(this, 'DemoApi', {
-  defaultIntegration: new LambdaProxyIntegration({ handler }),
+  defaultIntegration: new LambdaProxyIntegration('DefaultIntegration', handler),
   // https://${dn.domainName}/demo goes to apiDemo $default stage
   defaultDomainMapping: {
     domainName: dn,
@@ -344,7 +338,7 @@ Private integrations enable integrating an HTTP API route with private resources
 Amazon ECS container-based applications.  Using private integrations, resources in a VPC can be exposed for access by
 clients outside of the VPC.
 
-These integrations can be found in the [APIGatewayV2-Integrations](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-apigatewayv2-integrations-readme.html) constructs library.
+These integrations can be found in the [aws-apigatewayv2-integrations](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-apigatewayv2-integrations-readme.html) constructs library.
 
 ## WebSocket API
 
@@ -372,9 +366,9 @@ declare const disconnectHandler: lambda.Function;
 declare const defaultHandler: lambda.Function;
 
 const webSocketApi = new apigwv2.WebSocketApi(this, 'mywsapi', {
-  connectRouteOptions: { integration: new LambdaWebSocketIntegration({ handler: connectHandler }) },
-  disconnectRouteOptions: { integration: new LambdaWebSocketIntegration({ handler: disconnectHandler }) },
-  defaultRouteOptions: { integration: new LambdaWebSocketIntegration({ handler: defaultHandler }) },
+  connectRouteOptions: { integration: new LambdaWebSocketIntegration('ConnectIntegration', connectHandler) },
+  disconnectRouteOptions: { integration: new LambdaWebSocketIntegration('DisconnectIntegration',disconnectHandler) },
+  defaultRouteOptions: { integration: new LambdaWebSocketIntegration('DefaultIntegration', defaultHandler) },
 });
 
 new apigwv2.WebSocketStage(this, 'mystage', {
@@ -403,9 +397,7 @@ import { LambdaWebSocketIntegration } from '@aws-cdk/aws-apigatewayv2-integratio
 declare const messageHandler: lambda.Function;
 const webSocketApi = new apigwv2.WebSocketApi(this, 'mywsapi');
 webSocketApi.addRoute('sendmessage', {
-  integration: new LambdaWebSocketIntegration({
-    handler: messageHandler,
-  }),
+  integration: new LambdaWebSocketIntegration('SendMessageIntegration', messageHandler),
 });
 ```
 

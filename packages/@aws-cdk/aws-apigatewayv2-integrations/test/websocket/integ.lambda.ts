@@ -39,9 +39,9 @@ const messageHandler = new lambda.Function(stack, 'MessageHandler', {
 });
 
 const webSocketApi = new WebSocketApi(stack, 'mywsapi', {
-  connectRouteOptions: { integration: new LambdaWebSocketIntegration({ handler: connectHandler }) },
-  disconnectRouteOptions: { integration: new LambdaWebSocketIntegration({ handler: disconnetHandler }) },
-  defaultRouteOptions: { integration: new LambdaWebSocketIntegration({ handler: defaultHandler }) },
+  connectRouteOptions: { integration: new LambdaWebSocketIntegration('ConnectIntegration', connectHandler) },
+  disconnectRouteOptions: { integration: new LambdaWebSocketIntegration('DisconnectIntegration', disconnetHandler) },
+  defaultRouteOptions: { integration: new LambdaWebSocketIntegration('DefaultIntegration', defaultHandler) },
 });
 const stage = new WebSocketStage(stack, 'mystage', {
   webSocketApi,
@@ -49,6 +49,6 @@ const stage = new WebSocketStage(stack, 'mystage', {
   autoDeploy: true,
 });
 
-webSocketApi.addRoute('sendmessage', { integration: new LambdaWebSocketIntegration({ handler: messageHandler }) });
+webSocketApi.addRoute('sendmessage', { integration: new LambdaWebSocketIntegration('SendMessageIntegration', messageHandler) });
 
 new CfnOutput(stack, 'ApiEndpoint', { value: stage.url });

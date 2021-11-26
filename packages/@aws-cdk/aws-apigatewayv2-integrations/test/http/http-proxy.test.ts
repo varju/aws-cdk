@@ -9,9 +9,7 @@ describe('HttpProxyIntegration', () => {
     const api = new HttpApi(stack, 'HttpApi');
     new HttpRoute(stack, 'HttpProxyRoute', {
       httpApi: api,
-      integration: new HttpProxyIntegration({
-        url: 'some-target-url',
-      }),
+      integration: new HttpProxyIntegration('Integration', 'some-target-url'),
       routeKey: HttpRouteKey.with('/pets'),
     });
 
@@ -28,10 +26,7 @@ describe('HttpProxyIntegration', () => {
     const api = new HttpApi(stack, 'HttpApi');
     new HttpRoute(stack, 'HttpProxyRoute', {
       httpApi: api,
-      integration: new HttpProxyIntegration({
-        url: 'some-target-url',
-        method: HttpMethod.PATCH,
-      }),
+      integration: new HttpProxyIntegration('Integration', 'some-target-url', { method: HttpMethod.PATCH }),
       routeKey: HttpRouteKey.with('/pets'),
     });
 

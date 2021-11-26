@@ -16,9 +16,7 @@ const stack = new Stack(app, 'integ-http-proxy');
 const lambdaEndpoint = lambdaProxyEndpoint(stack);
 
 const httpEndpoint = new HttpApi(stack, 'HttpProxyApi', {
-  defaultIntegration: new HttpProxyIntegration({
-    url: lambdaEndpoint.url!,
-  }),
+  defaultIntegration: new HttpProxyIntegration('DefaultIntegration', lambdaEndpoint.url!),
 });
 
 new CfnOutput(stack, 'Endpoint', {
@@ -33,8 +31,6 @@ function lambdaProxyEndpoint(s: Stack): HttpApi {
   });
 
   return new HttpApi(s, 'LambdaProxyApi', {
-    defaultIntegration: new LambdaProxyIntegration({
-      handler,
-    }),
+    defaultIntegration: new LambdaProxyIntegration('DefaultIntegration', handler),
   });
 }

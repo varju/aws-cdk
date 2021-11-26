@@ -19,9 +19,7 @@ const handler = new lambda.Function(stack, 'AlwaysSuccess', {
 });
 
 const endpoint = new HttpApi(stack, 'LambdaProxyApi', {
-  defaultIntegration: new LambdaProxyIntegration({
-    handler,
-  }),
+  defaultIntegration: new LambdaProxyIntegration('DefaultIntegration', handler),
 });
 
 new CfnOutput(stack, 'Endpoint', {
